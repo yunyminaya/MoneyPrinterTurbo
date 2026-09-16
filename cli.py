@@ -33,15 +33,16 @@ class _CliHelpFormatter(
             and action.default not in (None, "", argparse.SUPPRESS)
             and action.option_strings
             and "default:" not in help_text.lower()
+            and "predeterminado:" not in help_text.lower()
         ):
-            help_text += " (default: %(default)s)"
+            help_text += " (predeterminado: %(default)s)"
         return help_text
 
 
 def _positive_int(value: str) -> int:
     parsed = int(value)
     if parsed < 1:
-        raise argparse.ArgumentTypeError(f"value must be >= 1, got {parsed}")
+        raise argparse.ArgumentTypeError(f"el valor debe ser >= 1, se recibió {parsed}")
     return parsed
 
 
@@ -49,7 +50,7 @@ def _paragraph_count(value: str) -> int:
     parsed = int(value)
     if parsed < 1 or parsed > 10:
         raise argparse.ArgumentTypeError(
-            f"paragraph-number must be between 1 and 10, got {parsed}"
+            f"paragraph-number debe estar entre 1 y 10, se recibió {parsed}"
         )
     return parsed
 
@@ -57,14 +58,14 @@ def _paragraph_count(value: str) -> int:
 def _non_negative_float(value: str) -> float:
     parsed = float(value)
     if not math.isfinite(parsed) or parsed < 0:
-        raise argparse.ArgumentTypeError(f"value must be a finite number >= 0, got {value!r}")
+        raise argparse.ArgumentTypeError(f"el valor debe ser un número finito >= 0, se recibió {value!r}")
     return parsed
 
 
 def _positive_float(value: str) -> float:
     parsed = float(value)
     if not math.isfinite(parsed) or parsed <= 0:
-        raise argparse.ArgumentTypeError(f"value must be a finite number > 0, got {value!r}")
+        raise argparse.ArgumentTypeError(f"el valor debe ser un número finito > 0, se recibió {value!r}")
     return parsed
 
 
@@ -72,7 +73,7 @@ def _percent_position(value: str) -> float:
     parsed = float(value)
     if not math.isfinite(parsed) or parsed < 0 or parsed > 100:
         raise argparse.ArgumentTypeError(
-            f"custom-position must be a finite number between 0 and 100, got {value!r}"
+            f"custom-position debe ser un número finito entre 0 y 100, se recibió {value!r}"
         )
     return parsed
 
@@ -80,7 +81,7 @@ def _percent_position(value: str) -> float:
 def _hex_color(value: str) -> str:
     if not re.fullmatch(r"#[0-9a-fA-F]{6}", value):
         raise argparse.ArgumentTypeError(
-            f"color must use #RRGGBB format, got {value!r}"
+            f"el color debe usar el formato #RRGGBB, se recibió {value!r}"
         )
     return value
 
@@ -91,7 +92,7 @@ def _task_id(value: str) -> str:
         return str(UUID(value.strip()))
     except (AttributeError, ValueError) as exc:
         raise argparse.ArgumentTypeError(
-            f"task-id must be a valid UUID, got {value!r}"
+            f"task-id debe ser un UUID válido, se recibió {value!r}"
         ) from exc
 
 
@@ -110,7 +111,7 @@ def _transition_mode(value: str) -> str | None:
     if normalized not in _TRANSITION_MODE_VALUES:
         allowed = ", ".join(_TRANSITION_MODE_VALUES)
         raise argparse.ArgumentTypeError(
-            f"video-transition-mode must be one of: {allowed}"
+            f"video-transition-mode debe ser uno de: {allowed}"
         )
     return _TRANSITION_MODE_VALUES[normalized]
 
@@ -122,148 +123,150 @@ def _bgm_type(value: str) -> str:
     if normalized in {"", "random", "custom", "sonilo"}:
         return normalized
     raise argparse.ArgumentTypeError(
-        "bgm-type must be one of: none, random, custom, sonilo"
+        "bgm-type debe ser uno de: none, random, custom, sonilo"
     )
 
 
 def parse_args(argv: Sequence[str] | None = None) -> argparse.Namespace:
     parser = argparse.ArgumentParser(
         description=(
-            "Generate MoneyPrinterTurbo videos without the WebUI.\n\n"
-            "Provider settings and credentials are read from config.toml.\n"
-            "Default full-video generation requires a configured LLM and Pexels API key.\n"
-            "The default Edge TTS voice requires no API key."
+            "Genera videos de MoneyPrinterTurbo sin usar la WebUI.\n\n"
+            "Los ajustes y credenciales de los proveedores se leen desde config.toml.\n"
+            "La generación completa por defecto requiere un LLM configurado y una "
+            "clave API de Pexels.\n"
+            "La voz predeterminada de Edge TTS no requiere clave API."
         ),
         epilog="""
-Examples:
-  Generate a complete video with the default Edge TTS voice:
-    uv run python cli.py --video-subject "How AI is changing everyday life"
+Ejemplos:
+  Generar un video completo con la voz predeterminada de Edge TTS:
+    uv run python cli.py --video-subject "Cómo la IA está cambiando la vida cotidiana"
 
-  Generate from local files. Relative paths use the current working directory;
-  absolute paths are also accepted:
-    uv run python cli.py --video-subject "How AI is changing everyday life" \\
+  Generar a partir de archivos locales. Las rutas relativas usan el directorio
+  de trabajo actual; también se aceptan rutas absolutas:
+    uv run python cli.py --video-subject "Cómo la IA está cambiando la vida cotidiana" \\
       --video-source local --video-materials "./1.mp4,./2.mp4"
 
-  Generate with a prepared script and no voiceover:
-    uv run python cli.py --video-script "Your complete script" \\
+  Generar con un guion preparado y sin voz:
+    uv run python cli.py --video-script "Tu guion completo" \\
       --voice-name no-voice --stop-at video
 
-  Stop after script generation:
-    uv run python cli.py --video-subject "How AI is changing everyday life" --stop-at script
+  Detenerse tras la generación del guion:
+    uv run python cli.py --video-subject "Cómo la IA está cambiando la vida cotidiana" --stop-at script
 
-Pipeline stages:
-  script     Generate or return the script.
-  terms      Generate material search terms; unavailable with local materials.
-  audio      Generate TTS, silent audio, or use --custom-audio-file.
-  subtitle   Generate subtitles when enabled.
-  materials  Download online materials or preprocess local files.
-  video      Generate the final video and run configured cross-posting.
-  The command stops immediately after the selected stage and prints that stage's result.
+Etapas del proceso:
+  script     Genera o devuelve el guion.
+  terms      Genera los términos de búsqueda de material; no disponible con materiales locales.
+  audio      Genera TTS, audio en silencio, o usa --custom-audio-file.
+  subtitle   Genera subtítulos cuando están activados.
+  materials  Descarga materiales en línea o preprocesa archivos locales.
+  video      Genera el video final y ejecuta la publicación cruzada configurada.
+  El comando se detiene inmediatamente después de la etapa seleccionada e imprime el resultado de esa etapa.
 
-Output and exit status:
-  Task files are written to storage/tasks/<task-id>/. A successful command prints one
-  JSON object to stdout and exits with 0. Task failures exit with 1; argument errors
-  exit with 2. Runtime logs are written to stderr.
+Salida y código de estado:
+  Los archivos de la tarea se escriben en storage/tasks/<task-id>/. Un comando
+  exitoso imprime un objeto JSON en la salida estándar y termina con 0. Las tareas
+  fallidas terminan con 1; los errores de argumentos terminan con 2. Los registros
+  de ejecución se escriben en la salida de error.
 """,
         formatter_class=_CliHelpFormatter,
     )
 
-    content_group = parser.add_argument_group("script and content")
+    content_group = parser.add_argument_group("guion y contenido")
     content_group.add_argument(
         "--video-subject",
         default="",
-        help="video topic; required unless --video-script is provided",
+        help="tema del video; requerido a menos que se proporcione --video-script",
     )
     content_group.add_argument(
         "--video-script",
         default="",
-        help="complete script; skips LLM script generation when provided",
+        help="guion completo; omite la generación del guion por LLM cuando se proporciona",
     )
     content_group.add_argument(
         "--video-terms",
         default=None,
-        help="comma-separated material search terms; generated automatically when omitted",
+        help="términos de búsqueda de material separados por comas; se generan automáticamente si se omiten",
     )
     content_group.add_argument(
         "--video-language",
         default=None,
         help=(
-            "script language code, such as zh-CN or en-US (default: auto-detect)"
+            "código de idioma del guion, como zh-CN o en-US (predeterminado: detección automática)"
         ),
     )
     content_group.add_argument(
         "--paragraph-number",
         type=_paragraph_count,
         default=None,
-        help="number of generated script paragraphs, from 1 to 10 (default: 1)",
+        help="número de párrafos generados del guion, de 1 a 10 (predeterminado: 1)",
     )
     content_group.add_argument(
         "--video-script-prompt",
         default=None,
-        help="additional requirements for LLM script generation",
+        help="requisitos adicionales para la generación del guion por LLM",
     )
     content_group.add_argument(
         "--custom-system-prompt",
         default=None,
-        help="replace the default LLM system prompt for script generation",
+        help="reemplaza el prompt de sistema predeterminado del LLM para la generación del guion",
     )
 
-    material_group = parser.add_argument_group("materials and pipeline")
+    material_group = parser.add_argument_group("materiales y proceso")
     material_group.add_argument(
         "--video-source",
         default="pexels",
         choices=["pexels", "pixabay", "coverr", "local"],
-        help="video material provider; online providers require matching API keys in config.toml",
+        help="proveedor de material de video; los proveedores en línea requieren claves API correspondientes en config.toml",
     )
     material_group.add_argument(
         "--video-materials",
         default="",
         metavar="PATH[,PATH...]",
         help=(
-            "comma-separated local image/video paths for --video-source local; relative "
-            "paths use the current working directory, then storage/local_videos as a "
-            "compatibility fallback; absolute paths are accepted"
+            "rutas de imágenes/videos locales separados por comas para --video-source local; las "
+            "rutas relativas usan el directorio de trabajo actual, luego storage/local_videos como "
+            "alternativa de compatibilidad; se aceptan rutas absolutas"
         ),
     )
     material_group.add_argument(
         "--stop-at",
         default="video",
         choices=_PIPELINE_STAGES,
-        help="stop after this pipeline stage; see the stage order below",
+        help="detenerse después de esta etapa del proceso; consulta el orden de etapas más abajo",
     )
 
-    video_group = parser.add_argument_group("video output")
+    video_group = parser.add_argument_group("salida de video")
     video_group.add_argument(
         "--video-count",
         type=_positive_int,
         default=1,
-        help="number of output videos, at least 1",
+        help="número de videos de salida, al menos 1",
     )
     video_group.add_argument(
         "--video-aspect",
         choices=["9:16", "16:9", "1:1"],
         default="9:16",
-        help="output aspect ratio: portrait, landscape, or square",
+        help="relación de aspecto de salida: vertical, horizontal o cuadrada",
     )
     video_group.add_argument(
         "--video-concat-mode",
         choices=["random", "sequential"],
         default=None,
-        help="source clip concatenation order (default: random)",
+        help="orden de concatenación de los clips de origen (predeterminado: random)",
     )
     video_group.add_argument(
         "--video-transition-mode",
         type=_transition_mode,
         default=None,
         metavar="{none,shuffle,fade-in,fade-out,slide-in,slide-out}",
-        help="transition applied between source clips (default: none)",
+        help="transición aplicada entre clips de origen (predeterminado: none)",
     )
     video_group.add_argument(
         "--video-clip-duration",
         type=_positive_int,
         default=None,
         help=(
-            "maximum duration of each source clip in seconds, at least 1 (default: 5)"
+            "duración máxima de cada clip de origen en segundos, al menos 1 (predeterminado: 5)"
         ),
     )
     video_group.add_argument(
@@ -271,24 +274,24 @@ Output and exit status:
         default=None,
         action=argparse.BooleanOptionalAction,
         help=(
-            "preserve script keyword order while selecting and concatenating materials "
-            "(default: disabled)"
+            "preserva el orden de las palabras clave del guion al seleccionar y concatenar "
+            "materiales (predeterminado: desactivado)"
         ),
     )
     video_group.add_argument(
         "--n-threads",
         type=_positive_int,
         default=None,
-        help="FFmpeg worker thread count, at least 1 (default: 2)",
+        help="número de hilos de trabajo de FFmpeg, al menos 1 (predeterminado: 2)",
     )
 
-    audio_group = parser.add_argument_group("voiceover and background music")
+    audio_group = parser.add_argument_group("voz y música de fondo")
     audio_group.add_argument(
         "--voice-name",
         default=DEFAULT_VOICE_NAME,
         help=(
-            "TTS voice identifier; use 'no-voice' for silent output. Provider-specific "
-            "identifiers use prefixes such as gemini:, mimo:, elevenlabs:, and chatterbox:"
+            "identificador de voz TTS; usa 'no-voice' para salida en silencio. Los identificadores "
+            "específicos de proveedor usan prefijos como gemini:, mimo:, elevenlabs: y chatterbox:"
         ),
     )
     audio_group.add_argument(
@@ -296,7 +299,7 @@ Output and exit status:
         type=_non_negative_float,
         default=None,
         help=(
-            "final voiceover volume multiplier, a finite number >= 0 (default: 1.0)"
+            "multiplicador del volumen final de la voz, un número finito >= 0 (predeterminado: 1.0)"
         ),
     )
     audio_group.add_argument(
@@ -304,7 +307,7 @@ Output and exit status:
         type=_positive_float,
         default=None,
         help=(
-            "speech rate multiplier, a finite number > 0 (default: 1.0)"
+            "multiplicador de la velocidad de habla, un número finito > 0 (predeterminado: 1.0)"
         ),
     )
     audio_group.add_argument(
@@ -312,9 +315,9 @@ Output and exit status:
         default=None,
         metavar="PATH",
         help=(
-            "existing MP3/WAV/M4A/AAC/FLAC/OGG voiceover; relative paths use the "
-            "current working directory. This skips TTS; set subtitle_provider=whisper "
-            "to transcribe it"
+            "voz existente en MP3/WAV/M4A/AAC/FLAC/OGG; las rutas relativas usan el "
+            "directorio de trabajo actual. Esto omite el TTS; configura "
+            "subtitle_provider=whisper para transcribirla"
         ),
     )
     audio_group.add_argument(
@@ -323,23 +326,23 @@ Output and exit status:
         default=None,
         metavar="{none,random,custom,sonilo}",
         help=(
-            "background music mode; Sonilo reads its API key from config.toml or "
-            "SONILO_API_KEY; --bgm-file implies custom when omitted "
-            "(default: random)"
+            "modo de música de fondo; Sonilo lee su clave API desde config.toml o "
+            "SONILO_API_KEY; --bgm-file implica custom si se omite "
+            "(predeterminado: random)"
         ),
     )
     audio_group.add_argument(
         "--sonilo-bgm-prompt",
         default=None,
-        help="optional music style prompt for Sonilo, up to 2000 characters",
+        help="prompt opcional de estilo musical para Sonilo, hasta 2000 caracteres",
     )
     audio_group.add_argument(
         "--bgm-file",
         default=None,
         metavar="PATH",
         help=(
-            "custom supported audio file inside storage/bgm or resource/songs; "
-            "accepts a filename or an allowed managed path"
+            "archivo de audio admitido personalizado dentro de storage/bgm o resource/songs; "
+            "acepta un nombre de archivo o una ruta gestionada permitida"
         ),
     )
     audio_group.add_argument(
@@ -347,26 +350,26 @@ Output and exit status:
         type=_non_negative_float,
         default=None,
         help=(
-            "background music volume multiplier, a finite number >= 0 (default: 0.2)"
+            "multiplicador del volumen de la música de fondo, un número finito >= 0 (predeterminado: 0.2)"
         ),
     )
 
-    subtitle_group = parser.add_argument_group("subtitles")
+    subtitle_group = parser.add_argument_group("subtítulos")
     subtitle_group.add_argument(
         "--subtitle-enabled",
         default=True,
         action=argparse.BooleanOptionalAction,
         help=(
-            "enable subtitles; use --no-subtitle-enabled to disable "
-            "(default: enabled)"
+            "activa los subtítulos; usa --no-subtitle-enabled para desactivarlos "
+            "(predeterminado: activados)"
         ),
     )
     subtitle_group.add_argument(
         "--font-name",
         default=None,
         help=(
-            "subtitle font filename inside resource/fonts "
-            "(default: STHeitiMedium.ttc)"
+            "nombre del archivo de fuente de subtítulos dentro de resource/fonts "
+            "(predeterminado: STHeitiMedium.ttc)"
         ),
     )
     subtitle_group.add_argument(
@@ -374,8 +377,8 @@ Output and exit status:
         choices=["top", "center", "bottom", "custom"],
         default=None,
         help=(
-            "subtitle vertical position (default: [ui].subtitle_position from "
-            "config.toml; bottom when unset)"
+            "posición vertical de los subtítulos (predeterminado: [ui].subtitle_position "
+            "desde config.toml; bottom si no se configura)"
         ),
     )
     subtitle_group.add_argument(
@@ -383,9 +386,9 @@ Output and exit status:
         type=_percent_position,
         default=None,
         help=(
-            "custom position as percent from top, 0-100; requires "
-            "--subtitle-position custom (default: [ui].custom_position from "
-            "config.toml; 70 when unset)"
+            "posición personalizada como porcentaje desde arriba, 0-100; requiere "
+            "--subtitle-position custom (predeterminado: [ui].custom_position desde "
+            "config.toml; 70 si no se configura)"
         ),
     )
     subtitle_group.add_argument(
@@ -393,28 +396,28 @@ Output and exit status:
         type=_hex_color,
         default=None,
         help=(
-            "subtitle text color in #RRGGBB format; quote the value in shells "
-            "that treat # as a comment (default: #FFFFFF)"
+            "color del texto de los subtítulos en formato #RRGGBB; pon el valor entre "
+            "comillas en shells que tratan # como comentario (predeterminado: #FFFFFF)"
         ),
     )
     subtitle_group.add_argument(
         "--font-size",
         type=_positive_int,
         default=None,
-        help="subtitle font size (default: 60)",
+        help="tamaño de fuente de los subtítulos (predeterminado: 60)",
     )
     subtitle_group.add_argument(
         "--stroke-color",
         type=_hex_color,
         default=None,
-        help="subtitle outline color in #RRGGBB format (default: #000000)",
+        help="color del contorno de los subtítulos en formato #RRGGBB (predeterminado: #000000)",
     )
     subtitle_group.add_argument(
         "--stroke-width",
         type=_non_negative_float,
         default=None,
         help=(
-            "subtitle outline width, a finite number >= 0 (default: 1.5)"
+            "ancho del contorno de los subtítulos, un número finito >= 0 (predeterminado: 1.5)"
         ),
     )
     subtitle_group.add_argument(
@@ -422,76 +425,76 @@ Output and exit status:
         default=None,
         action=argparse.BooleanOptionalAction,
         help=(
-            "enable subtitle background; use --no-subtitle-background-enabled to "
-            "disable (default: enabled)"
+            "activa el fondo de los subtítulos; usa --no-subtitle-background-enabled para "
+            "desactivarlo (predeterminado: activado)"
         ),
     )
     subtitle_group.add_argument(
         "--subtitle-background-color",
         type=_hex_color,
         default=None,
-        help="subtitle background color in #RRGGBB format (default: #000000)",
+        help="color de fondo de los subtítulos en formato #RRGGBB (predeterminado: #000000)",
     )
     subtitle_group.add_argument(
         "--rounded-subtitle-background",
         default=None,
         action=argparse.BooleanOptionalAction,
-        help="use a rounded subtitle background (default: disabled)",
+        help="usa un fondo redondeado para los subtítulos (predeterminado: desactivado)",
     )
 
-    execution_group = parser.add_argument_group("execution")
+    execution_group = parser.add_argument_group("ejecución")
     execution_group.add_argument(
         "--task-id",
         type=_task_id,
         default=None,
-        help="custom UUID used for storage/tasks/<task-id>; generated automatically when omitted",
+        help="UUID personalizado usado para storage/tasks/<task-id>; se genera automáticamente si se omite",
     )
     args = parser.parse_args(argv)
 
     if not args.video_subject.strip() and not args.video_script.strip():
-        parser.error("one of --video-subject or --video-script is required")
+        parser.error("se requiere --video-subject o --video-script")
 
     if args.video_source == "local" and args.stop_at == "terms":
         parser.error(
-            "--stop-at terms has no effect with --video-source local "
-            "(search terms are not generated for local sources)"
+            "--stop-at terms no tiene efecto con --video-source local "
+            "(no se generan términos de búsqueda para fuentes locales)"
         )
 
     stage_requires_materials = args.stop_at in {"materials", "video"}
     has_video_materials = bool((args.video_materials or "").strip())
     if args.video_source == "local" and stage_requires_materials and not has_video_materials:
         parser.error(
-            "--video-materials is required with --video-source local when "
-            "--stop-at is materials or video"
+            "se requiere --video-materials con --video-source local cuando "
+            "--stop-at es materials o video"
         )
     if args.video_source != "local" and has_video_materials:
-        parser.error("--video-materials can only be used with --video-source local")
+        parser.error("--video-materials solo puede usarse con --video-source local")
 
     if args.bgm_file:
         if args.bgm_type in (None, "custom"):
             args.bgm_type = "custom"
         else:
-            parser.error("--bgm-file can only be combined with --bgm-type custom")
+            parser.error("--bgm-file solo puede combinarse con --bgm-type custom")
 
     if args.sonilo_bgm_prompt:
         if args.bgm_type in (None, "sonilo"):
             args.bgm_type = "sonilo"
         else:
             parser.error(
-                "--sonilo-bgm-prompt can only be combined with --bgm-type sonilo"
+                "--sonilo-bgm-prompt solo puede combinarse con --bgm-type sonilo"
             )
 
     if args.custom_position is not None and args.subtitle_position != "custom":
-        parser.error("--custom-position requires --subtitle-position custom")
+        parser.error("--custom-position requiere --subtitle-position custom")
     if args.stop_at == "subtitle" and not args.subtitle_enabled:
-        parser.error("--stop-at subtitle cannot be combined with --no-subtitle-enabled")
+        parser.error("--stop-at subtitle no puede combinarse con --no-subtitle-enabled")
     if args.subtitle_background_enabled is False and (
         args.subtitle_background_color is not None
         or args.rounded_subtitle_background is True
     ):
         parser.error(
-            "subtitle background color or rounding cannot be enabled together with "
-            "--no-subtitle-background-enabled"
+            "el color de fondo de los subtítulos o el redondeado no pueden activarse "
+            "junto con --no-subtitle-background-enabled"
         )
 
     return args
@@ -588,7 +591,7 @@ def _resolve_cli_file(
     """
     expanded_path = os.path.expanduser(raw_path.strip())
     if not expanded_path:
-        raise ValueError(f"{description} path cannot be empty")
+        raise ValueError(f"la ruta {description} no puede estar vacía")
 
     candidate = (
         expanded_path
@@ -600,7 +603,7 @@ def _resolve_cli_file(
         resolved_path = os.path.realpath(os.path.join(fallback_dir, expanded_path))
 
     if not os.path.isfile(resolved_path):
-        raise ValueError(f"{description} file does not exist: {raw_path}")
+        raise ValueError(f"el archivo {description} no existe: {raw_path}")
     return resolved_path
 
 
@@ -639,7 +642,7 @@ def _resolve_managed_resource_file(
         ):
             return resolved_path
     raise ValueError(
-        f"{description} file must exist inside {resource_dir}: {raw_path}"
+        f"el archivo {description} debe existir dentro de {resource_dir}: {raw_path}"
     )
 
 
@@ -665,14 +668,14 @@ def prepare_cli_files(params: VideoParams, stop_at: str) -> None:
     if params.custom_audio_file:
         params.custom_audio_file = _resolve_cli_file(
             params.custom_audio_file,
-            description="custom audio",
+            description="audio personalizado",
         )
         audio_extension = os.path.splitext(params.custom_audio_file)[1].lower()
         if audio_extension not in _CUSTOM_AUDIO_EXTENSIONS:
             allowed = ", ".join(sorted(_CUSTOM_AUDIO_EXTENSIONS))
             raise ValueError(
-                f"unsupported custom audio type {audio_extension or '<none>'}; "
-                f"allowed extensions: {allowed}"
+                f"tipo de audio personalizado no admitido {audio_extension or '<none>'}; "
+                f"extensiones permitidas: {allowed}"
             )
 
     if params.bgm_type == "custom":
@@ -684,7 +687,7 @@ def prepare_cli_files(params: VideoParams, stop_at: str) -> None:
         elif not params.bgm_file:
             # 缺少文件是否构成错误取决于通用 BGM 开关，不能在 argparse 阶段
             # 无条件拦截，否则 ``custom + 0%`` 会和 WebUI、服务层行为不一致。
-            raise ValueError("--bgm-file is required when --bgm-type is custom")
+            raise ValueError("se requiere --bgm-file cuando --bgm-type es custom")
         else:
             try:
                 # CLI、WebUI 和任务服务必须共用同一个 BGM 文件边界。这里直接
@@ -697,8 +700,8 @@ def prepare_cli_files(params: VideoParams, stop_at: str) -> None:
                     bgm_service.SUPPORTED_BGM_EXTENSIONS
                 )
                 raise ValueError(
-                    "background music must be a supported audio file inside "
-                    f"storage/bgm or resource/songs ({supported_extensions}): "
+                    "la música de fondo debe ser un archivo de audio admitido dentro de "
+                    f"storage/bgm o resource/songs ({supported_extensions}): "
                     f"{params.bgm_file}"
                 ) from exc
 
@@ -706,10 +709,10 @@ def prepare_cli_files(params: VideoParams, stop_at: str) -> None:
         font_path = _resolve_managed_resource_file(
             params.font_name,
             resource_dir=utils.font_dir(),
-            description="subtitle font",
+            description="fuente de subtítulos",
         )
         if not font_path.lower().endswith((".ttf", ".ttc")):
-            raise ValueError("subtitle font must use the .ttf or .ttc extension")
+            raise ValueError("la fuente de subtítulos debe usar la extensión .ttf o .ttc")
         # 下游根据 resource/fonts 内的文件名拼接路径，因此仍保留纯文件名。
         params.font_name = os.path.basename(font_path)
 
@@ -721,15 +724,15 @@ def prepare_cli_files(params: VideoParams, stop_at: str) -> None:
     for material in params.video_materials or []:
         source_path = _resolve_cli_file(
             material.url,
-            description="local material",
+            description="material local",
             fallback_dir=local_videos_dir,
         )
         extension = os.path.splitext(source_path)[1].lower()
         if extension not in local_material_extensions:
             allowed = ", ".join(sorted(local_material_extensions))
             raise ValueError(
-                f"unsupported local material type {extension or '<none>'}: "
-                f"{material.url}; allowed extensions: {allowed}"
+                f"tipo de material local no admitido {extension or '<none>'}: "
+                f"{material.url}; extensiones permitidas: {allowed}"
             )
         resolved_materials.append((material, source_path, extension))
 
@@ -748,8 +751,8 @@ def prepare_cli_files(params: VideoParams, stop_at: str) -> None:
                 )
                 shutil.copy2(source_path, prepared_path)
                 logger.info(
-                    "copied CLI local material into managed storage: "
-                    f"source={source_path}, target={prepared_path}"
+                    "material local CLI copiado al almacenamiento gestionado: "
+                    f"origen={source_path}, destino={prepared_path}"
                 )
             prepared_paths[source_path] = prepared_path
 
@@ -762,7 +765,7 @@ def run_cli(argv: Sequence[str] | None = None) -> int:
         params = build_video_params(args)
         prepare_cli_files(params, stop_at=args.stop_at)
     except (ValueError, OSError) as exc:
-        logger.error(f"invalid CLI input: {exc}")
+        logger.error(f"entrada CLI no válida: {exc}")
         return 2
 
     # 帮助参数会在 parse_args 中直接退出。把业务服务延迟到这里导入，
@@ -771,19 +774,19 @@ def run_cli(argv: Sequence[str] | None = None) -> int:
     from app.utils import utils
 
     task_id = args.task_id or utils.get_uuid()
-    logger.info(f"start CLI task: task_id={task_id}, stop_at={args.stop_at}")
+    logger.info(f"tarea CLI iniciada: task_id={task_id}, stop_at={args.stop_at}")
     try:
         result = tm.start(task_id=task_id, params=params, stop_at=args.stop_at)
     except Exception as exc:
         logger.exception(
-            f"CLI task failed with an unexpected error: task_id={task_id}, error={exc}"
+            f"la tarea CLI falló con un error inesperado: task_id={task_id}, error={exc}"
         )
         return 1
     if not result or result.get("state") == tm.const.TASK_STATE_FAILED:
         failed_stage = result.get("failed_stage", "unknown") if result else "unknown"
         error = result.get("error", "unknown task error") if result else "empty result"
         logger.error(
-            f"CLI task failed: task_id={task_id}, stop_at={args.stop_at}, "
+            f"la tarea CLI falló: task_id={task_id}, stop_at={args.stop_at}, "
             f"stage={failed_stage}, error={error}"
         )
         return 1

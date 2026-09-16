@@ -1,20 +1,19 @@
-# MoneyPrinterTurbo Test Directory
+# Directorio de pruebas de MoneyPrinterTurbo
 
-This directory contains unit tests for the **MoneyPrinterTurbo** project.
+Este directorio contiene las pruebas unitarias del proyecto **MoneyPrinterTurbo**.
 
-## Directory Structure
+## Estructura del directorio
 
-- `services/`: Domain-focused unit and controller tests
-  - `test_task.py`: Task pipeline tests
-  - `test_task_manager.py`: In-memory and Redis queue tests
-  - `test_controller_*.py`: API controller tests split by controller domain
-  - `test_video.py`, `test_voice.py`: Media service tests
-- `test_main.py`: Application entry-point test
+- `services/`: pruebas unitarias y de controladores enfocadas en el dominio
+  - `test_task.py`: pruebas de la tubería de tareas
+  - `test_task_manager.py`: pruebas de colas en memoria y Redis
+  - `test_controller_*.py`: pruebas de controladores de la API divididas por dominio del controlador
+  - `test_video.py`, `test_voice.py`: pruebas de los servicios multimedia
+- `test_main.py`: prueba del punto de entrada de la aplicación
 
-## Running Tests
+## Ejecutar las pruebas
 
-The CI suite uses pytest, which also runs the existing `unittest.TestCase`
-tests:
+El conjunto de pruebas de CI usa pytest, que también ejecuta las pruebas existentes de `unittest.TestCase`:
 
 ```bash
 # Run all tests
@@ -30,26 +29,24 @@ uv run python -X utf8 -m pytest -q test/services/test_video.py::TestVideoService
 uv run python -X utf8 -m pytest -q test/services/test_video.py::TestVideoService::test_preprocess_video
 ```
 
-To run the same branch coverage check used by CI:
+Para ejecutar la misma verificación de cobertura de ramas que usa CI:
 
 ```bash
 uv run python -X utf8 -m coverage run -m pytest -q test
 uv run python -m coverage report
 ```
 
-Live provider tests are skipped by default. To run tests that may call external
-TTS or LLM services, set `MPT_RUN_INTEGRATION_TESTS=1` and provide the required
-provider credentials.
+Las pruebas de proveedores en vivo se omiten de forma predeterminada. Para ejecutar pruebas que puedan llamar a servicios externos de TTS o LLM, configura `MPT_RUN_INTEGRATION_TESTS=1` y proporciona las credenciales requeridas del proveedor.
 
-## Adding New Tests
+## Agregar nuevas pruebas
 
-To add tests for other components, follow these guidelines:
+Para agregar pruebas de otros componentes, sigue estas pautas:
 
-1. Name files `test_<domain>.py` and keep each file focused on one domain.
-2. Split broad controller suites into files such as `test_controller_video.py`.
-3. Use either pytest functions or `unittest.TestCase`; pytest collects both.
-4. Name test functions and methods with the `test_` prefix.
+1. Nombra los archivos `test_<domain>.py` y mantén cada archivo enfocado en un dominio.
+2. Divide las suites de controladores amplias en archivos como `test_controller_video.py`.
+3. Usa funciones de pytest o `unittest.TestCase`; pytest recoge ambas.
+4. Nombra las funciones y métodos de prueba con el prefijo `test_`.
 
-## Test Resources
+## Recursos de prueba
 
-Place any resource files required for testing in the `test/resources` directory.
+Coloca en el directorio `test/resources` cualquier archivo de recursos necesario para las pruebas.

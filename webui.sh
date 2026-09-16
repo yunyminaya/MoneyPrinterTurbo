@@ -2,17 +2,17 @@
 
 # If you could not download the model from the official site, you can use the mirror site.
 # Just remove the comment of the following line .
-# 如果你无法从官方网站下载模型，你可以使用镜像网站。
-# 只需要移除下面一行的注释即可。
+# Si no puedes descargar el modelo desde el sitio web oficial, puedes usar un sitio espejo.
+# Solo tienes que quitar el comentario de la siguiente línea.
 
 # export HF_ENDPOINT=https://hf-mirror.com
 
 CURRENT_DIR=$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)
 export PYTHONPATH="$CURRENT_DIR${PYTHONPATH:+:$PYTHONPATH}"
 
-# 0.0.0.0 只能表示“监听所有网卡”，不适合作为浏览器访问地址。
-# macOS/Linux 下浏览器打开 http://0.0.0.0:8501 可能会经过代理或网关，
-# 最终出现 502。默认绑定并打开 127.0.0.1，与 Windows 启动脚本保持一致。
+# 0.0.0.0 solo significa "escuchar en todas las interfaces de red"; no sirve como dirección de acceso del navegador.
+# En macOS/Linux, abrir http://0.0.0.0:8501 en el navegador podría pasar por un proxy o puerta de enlace
+# y terminar en un error 502. Por defecto se enlaza y abre 127.0.0.1, igual que en el script de inicio de Windows.
 MPT_WEBUI_HOST="${MPT_WEBUI_HOST:-127.0.0.1}"
 MPT_WEBUI_PORT="${MPT_WEBUI_PORT:-8501}"
 
@@ -23,11 +23,11 @@ elif command -v uv >/dev/null 2>&1; then
   PORT_CHECK_CMD="uv run python"
   set -- uv run streamlit
 elif command -v streamlit >/dev/null 2>&1; then
-  echo "***** Warning: using streamlit from PATH. If dependencies fail, run 'uv sync --frozen' first. *****"
+  echo "***** Advertencia: usando streamlit del PATH. Si fallan las dependencias, ejecuta primero 'uv sync --frozen'. *****"
   PORT_CHECK_CMD="python3"
   set -- streamlit
 else
-  echo "***** Neither project Python, uv, nor streamlit was found. Please install dependencies first. *****"
+  echo "***** No se encontró ni el Python del proyecto, ni uv, ni streamlit. Instala primero las dependencias. *****"
   exit 1
 fi
 
@@ -54,22 +54,22 @@ sys.exit(1)
 PY
 }
 
-# 用 Python 做端口探测，避免依赖 lsof/nc 在不同 macOS/Linux 发行版上的差异。
+# La detección de puertos se hace con Python para no depender de lsof/nc, que varían entre distribuciones de macOS/Linux.
 # shellcheck disable=SC2086
 SELECTED_WEBUI_PORT=$(find_available_port $PORT_CHECK_CMD)
 
 if [ -z "$SELECTED_WEBUI_PORT" ]; then
-  echo "***** No available WebUI port found in 8501-8599 for $MPT_WEBUI_HOST. *****"
+  echo "***** No se encontró ningún puerto WebUI disponible en 8501-8599 para $MPT_WEBUI_HOST. *****"
   exit 1
 fi
 
 if [ "$SELECTED_WEBUI_PORT" != "$MPT_WEBUI_PORT" ]; then
-  echo "***** Port $MPT_WEBUI_PORT is unavailable, using $SELECTED_WEBUI_PORT instead. *****"
+  echo "***** El puerto $MPT_WEBUI_PORT no está disponible, usando $SELECTED_WEBUI_PORT en su lugar. *****"
 fi
 
 MPT_WEBUI_PORT="$SELECTED_WEBUI_PORT"
 
-echo "***** WebUI address: http://$MPT_WEBUI_HOST:$MPT_WEBUI_PORT *****"
+echo "***** Dirección de la WebUI: http://$MPT_WEBUI_HOST:$MPT_WEBUI_PORT *****"
 "$@" run "$CURRENT_DIR/webui/Main.py" \
   --server.address="$MPT_WEBUI_HOST" \
   --server.port="$MPT_WEBUI_PORT" \

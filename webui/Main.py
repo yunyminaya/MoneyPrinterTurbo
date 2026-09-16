@@ -309,6 +309,7 @@ def _initialize_session_state():
         saved_language=saved_ui_language,
         browser_locale=browser_locale,
         supported_languages=locales.keys(),
+        default_language="es",
     )
 
     defaults = {
@@ -1219,7 +1220,7 @@ def _render_top_bar():
                     selected_index = i
 
             selected_language_code = st.selectbox(
-                "Language / 语言",
+                "Idioma",
                 options=language_codes,
                 index=selected_index,
                 format_func=lambda code: locales[code].get("Language", code),
@@ -1559,11 +1560,11 @@ def get_llm_provider_tips(provider_id, **kwargs):
     if provider is None:
         return ""
 
-    # Provider 配置说明目前统一维护中文和英文两套规范模板；其它界面语言
-    # 统一使用英文，避免在 locale 中复制英文后长期不同步。后续某个语种完成
-    # 全量翻译后，再将它加入这里的独立维护范围。
+    # Las notas de configuración de proveedores se mantienen en chino, inglés y
+    # español (traducción completa al español); los demás idiomas de la interfaz
+    # usan el inglés como respaldo.
     ui_language = st.session_state.get("ui_language", "en")
-    tips_language = ui_language if ui_language in {"zh", "en"} else "en"
+    tips_language = ui_language if ui_language in {"zh", "en", "es"} else "en"
     tips = (
         locales.get(tips_language, {}).get("Translation", {}).get(provider.tips_key, "")
     )
@@ -1592,10 +1593,10 @@ def get_llm_provider_label(provider):
 
 
 def get_tts_provider_tips(provider_id):
-    # TTS 配置说明与 LLM Provider 采用相同维护策略：只维护中英文，
-    # 其它界面语言统一回退英文，避免复制后长期不同步。
+    # Las notas de TTS usan la misma estrategia que las de proveedores LLM: se
+    # mantienen en chino, inglés y español; los demás idiomas usan el inglés.
     ui_language = st.session_state.get("ui_language", "en")
-    tips_language = ui_language if ui_language in {"zh", "en"} else "en"
+    tips_language = ui_language if ui_language in {"zh", "en", "es"} else "en"
     return (
         locales.get(tips_language, {})
         .get("Translation", {})

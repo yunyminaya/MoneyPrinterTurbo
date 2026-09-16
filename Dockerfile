@@ -1,20 +1,20 @@
-# Use an official Python runtime as a parent image
+# Usa un runtime oficial de Python como imagen base
 FROM python:3.11-slim-bullseye
 
-# Set the working directory in the container
+# Establece el directorio de trabajo dentro del contenedor
 WORKDIR /MoneyPrinterTurbo
 
-# 设置/MoneyPrinterTurbo目录权限为777
+# Establece los permisos del directorio /MoneyPrinterTurbo en 777
 RUN chmod 777 /MoneyPrinterTurbo
 
 ENV PYTHONPATH="/MoneyPrinterTurbo"
 
-# 本地用户默认继续优先使用国内镜像；GitHub Actions 发布 GHCR 镜像时使用 default，
-# 避免海外 runner 访问国内镜像过慢导致镜像发布长时间卡住。
+# Los usuarios locales siguen usando por defecto primero el espejo chino; al publicar la imagen GHCR con GitHub Actions se usa "default",
+# para evitar que los runners en el extranjero se ralenticen al acceder al espejo chino y la publicación quede bloqueada.
 ARG DOCKER_BUILD_MIRROR=china
 ARG PIP_USE_OFFICIAL=0
 
-# Install system dependencies with retry logic
+# Instala las dependencias del sistema con lógica de reintento
 RUN if [ "$DOCKER_BUILD_MIRROR" = "china" ]; then \
         echo "deb http://mirrors.aliyun.com/debian bullseye main" > /etc/apt/sources.list && \
         echo "deb http://mirrors.aliyun.com/debian-security bullseye-security main" >> /etc/apt/sources.list; \
@@ -50,10 +50,10 @@ RUN if [ "$DOCKER_BUILD_MIRROR" = "china" ]; then \
         done \
     ) && rm -rf /var/lib/apt/lists/*
 
-# Copy only the requirements.txt first to leverage Docker cache
+# Copia primero solo requirements.txt para aprovechar la caché de Docker
 COPY requirements.txt ./
 
-# 本地默认优先国内 PyPI 镜像；GHCR 发布使用官方 PyPI，避免海外 runner 因跨境镜像访问变慢。
+# Localmente se usa por defecto primero el espejo chino de PyPI; en la publicación de GHCR se usa el PyPI oficial, para evitar que los runners en el extranjero ralenticen el acceso transfronterizo al espejo.
 RUN if [ "$PIP_USE_OFFICIAL" = "1" ]; then \
         pip install --no-cache-dir --retries 3 --timeout 60 -r requirements.txt; \
     else \
@@ -62,21 +62,21 @@ RUN if [ "$PIP_USE_OFFICIAL" = "1" ]; then \
         pip install --no-cache-dir --retries 3 --timeout 60 -r requirements.txt; \
     fi
 
-# Now copy the rest of the codebase into the image
+# Ahora copia el resto del código fuente en la imagen
 COPY . .
 
-# Expose the port the app runs on
+# Expone el puerto en el que se ejecuta la aplicación
 EXPOSE 8501
 
-# 容器内部必须监听 0.0.0.0，宿主机仍通过 docker 端口映射限制为 127.0.0.1。
-# browser.serverAddress 只决定浏览器展示的访问地址，不能替代 server.address。
+# Dentro del contenedor se debe escuchar en 0.0.0.0; el host sigue limitado a 127.0.0.1 mediante el mapeo de puertos de Docker.
+# browser.serverAddress solo determina la dirección de acceso que muestra el navegador; no sustituye a server.address.
 CMD ["streamlit", "run", "./webui/Main.py", "--server.address=0.0.0.0", "--server.port=8501", "--browser.serverAddress=127.0.0.1", "--server.enableCORS=True", "--browser.gatherUsageStats=False", "--client.toolbarMode=minimal", "--logger.hideWelcomeMessage=True", "--server.showEmailPrompt=False"]
 
-# 1. Build the Docker image using the following command
+# 1. Compila la imagen Docker con el siguiente comando
 # docker build -t moneyprinterturbo .
 
-# 2. Run the Docker container using the following command
-## For Linux or MacOS:
+# 2. Ejecuta el contenedor Docker con el siguiente comando
+## Para Linux o macOS:
 # docker run -v $(pwd)/config.toml:/MoneyPrinterTurbo/config.toml -v $(pwd)/storage:/MoneyPrinterTurbo/storage -p 127.0.0.1:8501:8501 moneyprinterturbo
-## For Windows:
+## Para Windows:
 # docker run -v ${PWD}/config.toml:/MoneyPrinterTurbo/config.toml -v ${PWD}/storage:/MoneyPrinterTurbo/storage -p 127.0.0.1:8501:8501 moneyprinterturbo

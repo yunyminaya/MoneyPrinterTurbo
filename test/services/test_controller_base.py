@@ -61,7 +61,7 @@ class TestControllerAuthentication(unittest.TestCase):
                     base.verify_token(self._request(headers))
 
                 self.assertEqual(raised.exception.status_code, 401)
-                self.assertIn("invalid token", raised.exception.message)
+                self.assertIn("token no válido", raised.exception.message)
 
     def test_new_router_preserves_common_prefix_and_dependencies(self):
         """所有 V1 路由都应复用统一前缀，并仅在传入时设置鉴权依赖。"""

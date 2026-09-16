@@ -27,5 +27,5 @@ def verify_token(request: Request):
         raise HttpException(
             task_id=request_id,
             status_code=401,
-            message=f"invalid token: {request_url}, {user_agent}",
+            message=f"token no válido: {request_url}, {user_agent}",
         )

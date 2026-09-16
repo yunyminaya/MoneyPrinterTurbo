@@ -349,7 +349,7 @@ class TestCli(unittest.TestCase):
         self.assertEqual(code, 2)
         start.assert_not_called()
         self.assertIn(
-            "--bgm-file is required",
+            "se requiere --bgm-file",
             str(log_error.call_args),
         )
 
@@ -437,7 +437,7 @@ class TestCli(unittest.TestCase):
                 "resolve_bgm_file",
                 side_effect=ValueError("unsupported background music path"),
             ),
-            self.assertRaisesRegex(ValueError, "storage/bgm or resource/songs"),
+            self.assertRaisesRegex(ValueError, "storage/bgm o resource/songs"),
         ):
             cli.prepare_cli_files(params, stop_at="script")
 
@@ -524,7 +524,7 @@ class TestCli(unittest.TestCase):
         with tempfile.TemporaryDirectory() as managed_dir, patch(
             "app.utils.utils.storage_dir", return_value=managed_dir
         ):
-            with self.assertRaisesRegex(ValueError, "does not exist"):
+            with self.assertRaisesRegex(ValueError, "no existe"):
                 cli.prepare_cli_files(params, stop_at="video")
 
     def test_run_cli_rejects_missing_material_before_starting_task(self):
@@ -574,10 +574,10 @@ class TestCli(unittest.TestCase):
 
         self.assertEqual(cm.exception.code, 0)
         help_text = output.getvalue()
-        self.assertIn("zh-CN-XiaoxiaoNeural-Female", help_text)
-        self.assertIn("current working directory", help_text)
-        self.assertIn("Pipeline stages:", help_text)
-        self.assertIn("exit with 2", help_text)
+        self.assertIn("XiaoxiaoNeural-Female", help_text)
+        self.assertIn("directorio de trabajo actual", help_text)
+        self.assertIn("Etapas del proceso:", help_text)
+        self.assertIn("terminan con 2", help_text)
 
     def test_help_does_not_initialize_application_or_write_logs(self):
         """帮助命令应独立于业务配置加载，便于用户查看和脚本采集。"""
@@ -591,7 +591,7 @@ class TestCli(unittest.TestCase):
         )
 
         self.assertEqual(result.returncode, 0)
-        self.assertIn("Generate MoneyPrinterTurbo videos", result.stdout)
+        self.assertIn("Genera videos de MoneyPrinterTurbo", result.stdout)
         self.assertEqual(result.stderr, "")
 
 

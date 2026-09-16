@@ -20,7 +20,7 @@ router = new_router()
 @router.post(
     "/scripts",
     response_model=VideoScriptResponse,
-    summary="Create a script for the video",
+    summary="Crear un guion para el video",
 )
 def generate_video_script(request: Request, body: VideoScriptRequest):
     video_script = llm.generate_script(
@@ -37,7 +37,7 @@ def generate_video_script(request: Request, body: VideoScriptRequest):
 @router.post(
     "/terms",
     response_model=VideoTermsResponse,
-    summary="Generate video terms based on the video script",
+    summary="Generar términos de búsqueda a partir del guion del video",
 )
 def generate_video_terms(request: Request, body: VideoTermsRequest):
     video_terms = llm.generate_terms(
@@ -53,7 +53,7 @@ def generate_video_terms(request: Request, body: VideoTermsRequest):
 @router.post(
     "/social-metadata",
     response_model=VideoSocialMetadataResponse,
-    summary="Generate social publishing metadata",
+    summary="Generar metadatos para publicación en redes sociales",
 )
 def generate_video_social_metadata(
     request: Request, body: VideoSocialMetadataRequest

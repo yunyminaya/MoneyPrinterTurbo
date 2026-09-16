@@ -70,7 +70,7 @@ def _sanitize_upload_filename(filename: str, request_id: str) -> str:
         raise HttpException(
             task_id=request_id,
             status_code=400,
-            message=f"{request_id}: invalid filename",
+            message=f"{request_id}: nombre de archivo no válido",
         )
     return normalized_name
 
@@ -86,7 +86,7 @@ def _resolve_path_within_directory(base_dir: str, unsafe_path: str, request_id: 
         raise HttpException(
             task_id=request_id,
             status_code=404 if str(exc) == "file does not exist" else 403,
-            message=f"{request_id}: invalid file path",
+            message=f"{request_id}: ruta de archivo no válida",
         )
 
 
@@ -130,7 +130,7 @@ def _parse_byte_range(
         raise HttpException(
             task_id=request_id,
             status_code=416,
-            message=f"{request_id}: requested range is not satisfiable",
+            message=f"{request_id}: rango solicitado no satisfactorio",
         )
 
     if not range_header:
@@ -165,27 +165,27 @@ def _parse_byte_range(
         raise HttpException(
             task_id=request_id,
             status_code=416,
-            message=f"{request_id}: requested range is not satisfiable",
+            message=f"{request_id}: rango solicitado no satisfactorio",
         ) from exc
 
     return start, end
 
 
-@router.post("/videos", response_model=TaskResponse, summary="Generate a short video")
+@router.post("/videos", response_model=TaskResponse, summary="Generar un video corto")
 def create_video(
     background_tasks: BackgroundTasks, request: Request, body: TaskVideoRequest
 ):
     return create_task(request, body, stop_at="video")
 
 
-@router.post("/subtitle", response_model=TaskResponse, summary="Generate subtitle only")
+@router.post("/subtitle", response_model=TaskResponse, summary="Generar solo los subtítulos")
 def create_subtitle(
     background_tasks: BackgroundTasks, request: Request, body: SubtitleRequest
 ):
     return create_task(request, body, stop_at="subtitle")
 
 
-@router.post("/audio", response_model=TaskResponse, summary="Generate audio only")
+@router.post("/audio", response_model=TaskResponse, summary="Generar solo el audio")
 def create_audio(
     background_tasks: BackgroundTasks, request: Request, body: AudioRequest
 ):
@@ -222,7 +222,7 @@ def create_task(
             task_id=task_id, status_code=400, message=f"{request_id}: {str(e)}"
         )
 
-@router.get("/tasks", response_model=TaskListResponse, summary="Get all tasks")
+@router.get("/tasks", response_model=TaskListResponse, summary="Obtener todas las tareas")
 def get_all_tasks(
     request: Request,
     page: int = Query(1, ge=1),
@@ -241,11 +241,11 @@ def get_all_tasks(
 
 
 @router.get(
-    "/tasks/{task_id}", response_model=TaskQueryResponse, summary="Query task status"
+    "/tasks/{task_id}", response_model=TaskQueryResponse, summary="Consultar el estado de la tarea"
 )
 def get_task(
     request: Request,
-    task_id: str = Path(..., description="Task ID"),
+    task_id: str = Path(..., description="ID de la tarea"),
     query: TaskQueryRequest = Depends(),
 ):
     request_id = base.get_task_id(request)
@@ -268,16 +268,16 @@ def get_task(
         return utils.get_response(200, response_task)
 
     raise HttpException(
-        task_id=task_id, status_code=404, message=f"{request_id}: task not found"
+        task_id=task_id, status_code=404, message=f"{request_id}: tarea no encontrada"
     )
 
 
 @router.delete(
     "/tasks/{task_id}",
     response_model=TaskDeletionResponse,
-    summary="Delete a generated short video task",
+    summary="Eliminar una tarea de video corto generado",
 )
-def delete_video(request: Request, task_id: str = Path(..., description="Task ID")):
+def delete_video(request: Request, task_id: str = Path(..., description="ID de la tarea")):
     request_id = base.get_task_id(request)
     task = sm.state.get_task(task_id)
     if task:
@@ -290,7 +290,7 @@ def delete_video(request: Request, task_id: str = Path(..., description="Task ID
             raise HttpException(
                 task_id=task_id,
                 status_code=409,
-                message=f"{request_id}: task is still running",
+                message=f"{request_id}: la tarea aún se está ejecutando",
             )
 
         tasks_dir = utils.task_dir()
@@ -303,12 +303,12 @@ def delete_video(request: Request, task_id: str = Path(..., description="Task ID
         return utils.get_response(200)
 
     raise HttpException(
-        task_id=task_id, status_code=404, message=f"{request_id}: task not found"
+        task_id=task_id, status_code=404, message=f"{request_id}: tarea no encontrada"
     )
 
 
 @router.get(
-    "/musics", response_model=BgmRetrieveResponse, summary="Retrieve local BGM files"
+    "/musics", response_model=BgmRetrieveResponse, summary="Obtener los archivos de música de fondo locales"
 )
 def get_bgm_list(request: Request):
     bgm_list = []
@@ -330,14 +330,14 @@ def get_bgm_list(request: Request):
 @router.post(
     "/musics",
     response_model=BgmUploadResponse,
-    summary="Upload a background music file",
+    summary="Subir un archivo de música de fondo",
     description=(
-        "Validate an MP3, M4A, AAC, WAV, FLAC, OGG, OPUS, or WMA file up to "
-        "30 MB and store it under an immutable UUID filename in storage/bgm."
+        "Valida un archivo MP3, M4A, AAC, WAV, FLAC, OGG, OPUS o WMA de hasta "
+        "30 MB y lo guarda con un nombre de archivo UUID inmutable en storage/bgm."
     ),
     responses={
-        400: {"description": "The filename, format, size, or audio stream is invalid"},
-        500: {"description": "FFmpeg validation or persistent storage is unavailable"},
+        400: {"description": "El nombre, formato, tamaño o flujo de audio del archivo no es válido"},
+        500: {"description": "La validación con FFmpeg o el almacenamiento persistente no está disponible"},
     },
 )
 def upload_bgm_file(request: Request, file: UploadFile = File(...)):
@@ -364,14 +364,14 @@ def upload_bgm_file(request: Request, file: UploadFile = File(...)):
         raise HttpException(
             task_id=request_id,
             status_code=500,
-            message=f"{request_id}: background music validation is unavailable",
+            message=f"{request_id}: la validación de música de fondo no está disponible",
         )
 
     response = {"file": safe_filename}
     return utils.get_response(200, response)
 
 @router.get(
-    "/video_materials", response_model=VideoMaterialRetrieveResponse, summary="Retrieve local video materials"
+    "/video_materials", response_model=VideoMaterialRetrieveResponse, summary="Obtener los materiales de video locales"
 )
 def get_video_materials_list(request: Request):
     allowed_suffixes = ("mp4", "mov", "avi", "flv", "mkv", "jpg", "jpeg", "png")
@@ -401,7 +401,7 @@ def get_video_materials_list(request: Request):
 @router.post(
     "/video_materials",
     response_model=VideoMaterialUploadResponse,
-    summary="Upload the video material file to the local videos directory",
+    summary="Subir el archivo de material de video al directorio local de videos",
 )
 def upload_video_material_file(request: Request, file: UploadFile = File(...)):
     request_id = base.get_task_id(request)
@@ -423,7 +423,7 @@ def upload_video_material_file(request: Request, file: UploadFile = File(...)):
         return utils.get_response(200, response)
 
     raise HttpException(
-        "", status_code=400, message=f"{request_id}: Only files with extensions {', '.join(allowed_suffixes)} can be uploaded"
+        "", status_code=400, message=f"{request_id}: Solo se pueden subir archivos con las extensiones {', '.join(allowed_suffixes)}"
     )
 
 @router.get("/stream/{file_path:path}")

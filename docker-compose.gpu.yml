@@ -1,15 +1,15 @@
-# GPU override file
-# Usage: docker compose -f docker-compose.yml -f docker-compose.gpu.yml up -d
+# Archivo de reemplazo para GPU
+# Uso: docker compose -f docker-compose.yml -f docker-compose.gpu.yml up -d
 #
-# Prerequisites:
-#   1. NVIDIA GPU driver installed on host
-#   2. NVIDIA Container Toolkit installed
-#   3. Verify with: docker info | grep nvidia
+# Requisitos previos:
+#   1. Controlador de GPU NVIDIA instalado en el host
+#   2. NVIDIA Container Toolkit instalado
+#   3. Verifícalo con: docker info | grep nvidia
 #
-# This file overrides the default docker-compose.yml to:
-#   - Build with Dockerfile.gpu (NVIDIA CUDA base image)
-#   - Attach GPU devices to both services because video generation can run in
-#     either the WebUI process or the API process
+# Este archivo reemplaza el docker-compose.yml predeterminado para:
+#   - Compilar con Dockerfile.gpu (imagen base CUDA de NVIDIA)
+#   - Adjuntar dispositivos GPU a ambos servicios, porque la generación de video puede ejecutarse
+#     tanto en el proceso de la WebUI como en el de la API
 services:
   webui:
     build:
