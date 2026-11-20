@@ -107,6 +107,28 @@
   </tr>
   <tr>
     <td align="center" width="120">
+      <a href="https://link.bach.art/4iW1qZL"><picture><source media="(prefers-color-scheme: dark)" srcset="docs/sponsors/video-rebirth-logo-dark.svg"><img src="docs/sponsors/video-rebirth-logo-light.svg" alt="Video Rebirth" height="56"></picture></a><br>
+      <a href="https://link.bach.art/4iW1qZL"><strong>Video Rebirth</strong></a>
+    </td>
+    <td align="left">
+      本プロジェクトをスポンサードしてくださっている <a href="https://link.bach.art/4iW1qZL">Video Rebirth</a> に感謝します！Video Rebirth は、本番制作向けの産業グレードの動画モデル <strong>BACH</strong> を開発しています。<strong>BACH1.0 Pro は 2026 年 10 月に Artificial Analysis の画像から動画生成ランキングで第 2 位を獲得しました</strong>。<br>
+      HyperFlow シリーズもオープンソースで公開しており、<strong>HyperFlow H3 Flash はリリースから 6 日間で 50 万ダウンロードを突破</strong>。動画生成は <strong>1 秒あたり 0.03 米ドルから</strong>利用できます。
+    </td>
+  </tr>
+  <tr>
+    <td align="center" width="120">
+      <a href="https://www.aigei.com/?utm_source=github&amp;utm_medium=sponsorship&amp;utm_campaign=moneyprinterturbo&amp;utm_content=readme_ja_logo"><img src="docs/sponsors/aigei-logo.png" alt="Aigei（爱给网）" width="112"></a><br>
+      <a href="https://www.aigei.com/?utm_source=github&amp;utm_medium=sponsorship&amp;utm_campaign=moneyprinterturbo&amp;utm_content=readme_ja_brand"><strong>Aigei（爱给网）</strong></a>
+    </td>
+    <td align="left">
+      本プロジェクトを支援・スポンサードしてくださっている <a href="https://www.aigei.com/?utm_source=github&amp;utm_medium=sponsorship&amp;utm_campaign=moneyprinterturbo&amp;utm_content=readme_ja_thanks">Aigei（爱给网）</a> に感謝します！ Aigei は、<strong>効果音、BGM、動画、画像、3D モデル、ゲーム素材</strong>をまとめて探せるデジタル素材プラットフォームです。ショート動画の制作、映像のポストプロダクション、ゲーム開発、デザインに使える素材が揃っています。<br>
+      Aigei オープンプラットフォームは <strong>REST API と MCP</strong> に対応しています。効果音、BGM、動画、画像の検索、絞り込み、ファイル取得を動画制作の自動化、プログラムによる編集、AI を使った制作フローに組み込めるため、手作業で素材を探して整理する手間を減らせます。<br>
+      🎁 <strong>素材の検索と詳細情報の閲覧は無料</strong>です。ゲストとログインユーザーのどちらもダウンロードでき、<strong>無料ダウンロード枠</strong>も用意されています。利用枠、料金、素材のライセンス条件はプラットフォーム上の案内をご確認ください。<br>
+      👉 <a href="https://www.aigei.com/open?utm_source=github&amp;utm_medium=sponsorship&amp;utm_campaign=moneyprinterturbo&amp;utm_content=readme_ja_open_platform">Aigei オープンプラットフォームを試す</a> · <a href="https://www.aigei.com/?utm_source=github&amp;utm_medium=sponsorship&amp;utm_campaign=moneyprinterturbo&amp;utm_content=readme_ja_asset_library">Aigei の素材ライブラリを見る</a>
+    </td>
+  </tr>
+  <tr>
+    <td align="center" width="120">
       <a href="https://reccloud.com"><img src="docs/sponsors/reccloud-logo.svg" alt="RecCloud" height="36"></a><br>
       <a href="https://reccloud.com">RecCloud</a>
     </td>
@@ -127,23 +149,23 @@
 
 ## 作者によるもう 1 つのオープンソースプロジェクト: MangoDisk ⭐
 
-<p align="center">
-  <a href="https://mangodisk.app/ja">
-    <picture>
-      <source media="(prefers-color-scheme: dark)" srcset="https://assets.mangodisk.app/images/screenshots/ja/dark-01-deep-cleanup.jpg?ver=1.1.0">
-      <source media="(prefers-color-scheme: light)" srcset="https://assets.mangodisk.app/images/screenshots/ja/light-01-deep-cleanup.jpg?ver=1.1.0">
-      <img src="https://assets.mangodisk.app/images/screenshots/ja/light-01-deep-cleanup.jpg?ver=1.1.0" width="900" alt="MangoDisk ディープクリーン画面">
-    </picture>
-  </a>
-</p>
-
-<p align="center">
-  <strong>macOS・Windows 向けのオープンソースのディスククリーンアップ、容量分析、システム最適化ツール</strong><br>
+<p align="left">
+  <strong>macOS・Windows・Linux 向けのオープンソースのディスククリーンアップ、容量分析、システム最適化ツール</strong><br>
   キャッシュ、大容量ファイル、重複ファイル、アプリの残骸を整理し、容量分析、アプリのアンインストール、スタートアップ管理、システム最適化・メンテナンスにも対応します。
 </p>
 
-<p align="center">
+<p align="left">
   <a href="https://mangodisk.app/ja">MangoDisk 公式サイト</a> · <a href="https://github.com/harry0703/MangoDisk">GitHub で見る</a>
+</p>
+
+<p align="center">
+  <a href="https://github.com/harry0703/MangoDisk">
+    <picture>
+      <source media="(prefers-color-scheme: dark)" srcset="https://assets.mangodisk.app/images/screenshots/ja/dark-01-deep-cleanup.jpg?ver=2.0.0">
+      <source media="(prefers-color-scheme: light)" srcset="https://assets.mangodisk.app/images/screenshots/ja/light-01-deep-cleanup.jpg?ver=2.0.0">
+      <img src="https://assets.mangodisk.app/images/screenshots/ja/light-01-deep-cleanup.jpg?ver=2.0.0" width="900" alt="MangoDisk ディープクリーン画面">
+    </picture>
+  </a>
 </p>
 
 ---
@@ -155,36 +177,44 @@
 - [x] **AI エージェント、WebUI、API、CLI** の 4 つの利用方法を提供し、手軽な動画制作から自動化ワークフローへの組み込みまで対応
 - [x] テーマから台本、ナレーション、素材、字幕、BGM、編集までを自動化し、各工程で独自コンテンツを使用することも可能
 - [x] **複数動画の一括生成**、タスク履歴、生成設定と API キーのインポート・エクスポート・復元に対応
+- [x] 台本生成、ナレーション、素材ダウンロード、クリップ処理、最終レンダリングの進捗を確認可能
 
 ### 台本とモデルプロバイダー
 
 - [x] AI による**多言語動画台本**の生成・リライトに加え、独自台本の利用にも対応
-- [x] [Kimi / Moonshot AI](https://platform.kimi.ai?track_id=track-9e3b711aa2594e378f6fe5b8de718a76&aff=moneyprinterturbo)、[OpenAI](https://platform.openai.com/api-keys)、[Anthropic Claude](https://platform.claude.com/settings/keys)、[Google Gemini](https://aistudio.google.com/app/apikey)、[DeepSeek](https://platform.deepseek.com/api_keys)、[Alibaba Cloud Qwen](https://qwen.ai/apiplatform)、[Microsoft Azure OpenAI](https://portal.azure.com/#view/Microsoft_Azure_ProjectOxford/CognitiveServicesHub/~/OpenAI)、[ByteDance VolcEngine Ark](https://console.volcengine.com/ark)、[xAI Grok](https://console.x.ai/)、[MiniMax](https://platform.minimax.io/)、[Xiaomi MiMo](https://platform.xiaomimimo.com/docs/zh-CN/quick-start/first-api-call) などの主要なモデルサービスに対応
-- [x] [Shengsuan Cloud](https://www.shengsuanyun.com/?from=CH_XUQ4OTSK)、[APIMart](https://go.apimart.ai/gh-moneyprinterturbo)、[Cloudflare AI Gateway](https://dash.cloudflare.com/)、[Alibaba ModelScope](https://modelscope.cn/docs/model-service/API-Inference/intro)、[AIHubMix](https://aihubmix.com/)、[AIML API](https://aimlapi.com/app/keys)、[EvoLink](https://evolink.ai/dashboard/keys)、[OpenRouter](https://openrouter.ai/settings/keys)、[API Route](https://www.api-route.com/)、[Ollama](https://ollama.com/)、[Claude Code サブスクリプション](https://code.claude.com/docs)、[OneAPI](https://github.com/songquanpeng/one-api)、[LiteLLM](https://docs.litellm.ai/docs/providers)、[Groq](https://console.groq.com/keys)、[Pollinations AI](https://enter.pollinations.ai/) などの統合ゲートウェイ、集約サービス、ローカルランタイムに対応
+- [x] [Kimi / Moonshot AI](https://platform.kimi.ai?track_id=track-9e3b711aa2594e378f6fe5b8de718a76&aff=moneyprinterturbo)、[OpenAI](https://platform.openai.com/api-keys)、[Anthropic Claude](https://platform.claude.com/settings/keys)、[Google Gemini](https://aistudio.google.com/app/apikey)、[DeepSeek](https://platform.deepseek.com/api_keys)、[Alibaba Cloud Qwen](https://qwen.ai/apiplatform)、[Microsoft Azure OpenAI](https://portal.azure.com/#view/Microsoft_Azure_ProjectOxford/CognitiveServicesHub/~/OpenAI)、[ByteDance VolcEngine Ark](https://console.volcengine.com/ark)、[xAI Grok](https://console.x.ai/)、[MiniMax](https://platform.minimax.io/)、[Muse Spark](https://dev.meta.ai/docs/authentication)、[iFlytek Spark](https://maas.xfyun.cn/)、[Xiaomi MiMo](https://platform.xiaomimimo.com/docs/zh-CN/quick-start/first-api-call) などの主要なモデルサービスに対応
+- [x] [APIXO AI](https://apixo.ai/dashboard/api-keys)、[APINEBULA](https://apinebula.ai/ref/luDuqJIb)、[Jalapeno Cloud](https://www.jalapeno-cloud.ai/MoneyPrinterTurbo)、[Infistar](https://infistar.cc/keys)、[Fluxion AI](https://fluxionai.space/register?source=github&campaign=moneyprinterturbo&promo=MONEYPRINTERTURBO)、[Cheaper Inference](https://cheaperinference.com/signup)、[Requesty](https://app.requesty.ai/api-keys)、[FutureInfra](https://futureinfra.ai/console/?screen=ai-router)、[Y-API](https://y-api.bestvirtualgoods.com/app/keys)、[Opper](https://platform.opper.ai)、[onomeo](https://onomeo.com/dashboard)、[EmpirioLabs AI](https://platform.empiriolabs.ai/dashboard/api-keys)、[Runcrate](https://www.runcrate.ai/dashboard/api-keys?utm_source=MoneyPrinterTurbo&utm_medium=directory&utm_campaign=gpu_pricing)、[CloudGPU](https://cloudgpu.app)、[cheapaimodel](https://console.cheapaimodel.ai/keys)、[Shengsuan Cloud](https://www.shengsuanyun.com/?from=CH_XUQ4OTSK)、[APIMart](https://go.apimart.ai/gh-moneyprinterturbo)、[Cloudflare AI Gateway](https://dash.cloudflare.com/)、[Alibaba ModelScope](https://modelscope.cn/docs/model-service/API-Inference/intro)、[AIHubMix](https://aihubmix.com/)、[AIML API](https://aimlapi.com/app/keys)、[EvoLink](https://evolink.ai/dashboard/keys)、[OpenRouter](https://openrouter.ai/settings/keys)、[API Route](https://www.api-route.com/)、[Kimi Code](https://www.kimi.ai/code?aff=moneyprinterturbo)、[OpenAI - Codex](docs/codex-provider.md)、[ChatGPT Native OAuth](docs/chatgpt-provider.md)、[Ollama](https://ollama.com/)、[Claude Code サブスクリプション](https://code.claude.com/docs)、[OneAPI](https://github.com/songquanpeng/one-api)、[LiteLLM](https://docs.litellm.ai/docs/providers)、[Groq](https://console.groq.com/keys)、[Pollinations AI](https://enter.pollinations.ai/) などの統合ゲートウェイ、集約サービス、ローカルランタイムに対応
 
 ### 動画・画像素材
 
 - [x] 手持ちの**ローカル画像・動画**をアップロードできるほか、[Pexels（無料）](https://www.pexels.com/api/)、[Pixabay（無料）](https://pixabay.com/api/docs/)、[Coverr](https://coverr.co/developers?ctx=header_navigation) の高画質ストック素材を利用可能
 - [x] [Metaso MiniMax H3](https://metaso.cn/minimax-h3/?s=MPT) によるテキスト動画生成に対応し、`768P`／`2K`、4～15 秒の素材を `9:16`、`16:9`、`1:1` の 3 種類のアスペクト比で生成可能
-- [x] [Shengsuan Cloud AI Video](https://www.shengsuanyun.com/?from=CH_XUQ4OTSK) で複数の AI 動画素材を生成し、プロジェクトのナレーション、字幕、編集フローで 1 本の動画に合成可能
+- [x] [Shengsuan Cloud LoomLoom AI Video](https://www.shengsuanyun.com/?from=CH_XUQ4OTSK) の見積もりと料金を確認して複数の AI 動画素材を生成し、ナレーション、字幕、編集フローで 1 本の動画に合成可能
+- [x] [Infistar](https://infistar.cc/keys) と [Jalapeno Cloud](https://www.jalapeno-cloud.ai/MoneyPrinterTurbo) による AI 動画素材の生成に対応
 - [x] [Volcano Engine Ark Seedance](https://console.volcengine.com/ark/region:ark+cn-beijing/apikey) をネイティブに統合し、台本の各セグメントから一貫した動画素材を生成可能
 - [x] [WaveSpeed AI](https://wavespeed.ai) によるテキスト動画生成で、台本のキーワードからオリジナル素材を作成可能
 - [x] [OFox](https://ofox.ai) のマルチモデルテキスト動画生成に対応し、1 つの API キーで Seedance、Wan などのモデルを利用可能
 - [x] 非同期の [MuAPI](https://muapi.ai) テキスト動画 API で 3～12 秒の AI 素材を生成し、Endpoint、アスペクト比、解像度、ポーリングを設定可能
-- [x] [OpenAI 互換の画像生成](https://platform.openai.com/docs/guides/image-generation)サービスや独自の画像ゲートウェイを接続し、生成画像を動きのある動画クリップに変換可能
-- [x] クリップの長さ、フレームへの合わせ方、素材の使用順を調整し、アスペクト比や構成に合わせた編集が可能
+- [x] [useapi.net](https://useapi.net/docs/api-google-flow-v1?utm_source=moneyprinterturbo&utm_medium=referral&utm_campaign=mpt-integration) の AI 動画と画像に対応し、ご自身の Google AI プランで Google Flow または [Google Vids](https://useapi.net/docs/api-google-vids-v1?utm_source=moneyprinterturbo&utm_medium=referral&utm_campaign=mpt-integration) から Veo 3.1 と Gemini Omni Flash の動画を（有料プランでは 10 秒以内のクリップを 1080p に無料でアップスケール可能）、Google Flow から Nano Banana の画像を、ご自身の [Kling](https://useapi.net/docs/api-kling-v1?utm_source=moneyprinterturbo&utm_medium=referral&utm_campaign=mpt-integration) アカウントで Kling の動画と画像を、ご自身の [Dreamina](https://useapi.net/docs/api-dreamina-v1?utm_source=moneyprinterturbo&utm_medium=referral&utm_campaign=mpt-integration) アカウントで Seedance の動画を生成可能
+- [x] [OpenAI 互換の画像生成](https://platform.openai.com/docs/guides/image-generation)サービス、独自の画像ゲートウェイ、同梱の[ローカル SDXL 画像サーバー](docs/local-image-server/README.md) を接続可能。ローカル画像と生成画像は静止または緩やかなズームを選択可能
+- [x] [OpenAI - Codex の画像生成](docs/codex-provider.md) に対応し、ChatGPT ログインを共有しながら画像用モデルを個別に選択可能。アカウントと選択したモデルに画像生成の利用権限が必要
+- [x] クリップの長さ、再生速度、トランジションを調整し、クロップまたは黒帯付き表示、ランダムまたは順番どおりの素材配置を選択可能
+- [x] [TwelveLabs](https://playground.twelvelabs.io/) を任意で接続し、動画のテーマに基づいて素材検索キーワードを並べ替え可能
 
 ### ナレーション・字幕・BGM
 
 - [x] 自動ナレーション、音声ファイルのアップロード、音声なしの 3 つの方式に対応し、音声サンプルとナレーション全体をプレビュー可能
 - [x] **Edge TTS（無料・API キー不要）**、Azure Speech、SiliconFlow、Google Gemini、Xiaomi MiMo、MiniMax、ElevenLabs、Chatterbox、Kokoro、Fish Audio、ModelBest VoxCPM などの音声サービスに対応
-- [x] 字幕を自動生成し、フォント、位置、色、サイズ、縁取り、背景スタイルを調整可能
-- [x] ランダム、ローカル、AI 生成の BGM に対応し、音量を個別に調整可能
+- [x] ModelBest VoxCPM で参照音声から声をクローン化でき、Edge TTS では `[pause: 2s]` などのタグで読み上げの間を調整可能
+- [x] TTS のタイムスタンプまたはローカル Whisper から字幕を自動生成。文単位・単語単位の表示とスプリング型ポップアップアニメーションに対応し、フォント、位置、色、サイズ、縁取り、背景を調整可能
+- [x] ランダム BGM、プリセット曲の試聴、ローカル音楽のアップロードに対応。[Sonilo](https://platform.sonilo.com/dashboard) や [ElevenLabs Video-to-Music](https://elevenlabs.io/) で動画に合わせた BGM を生成し、音量を個別に調整可能
 
 ### 出力と公開
 
 - [x] 縦型 `9:16（1080×1920）`、横型 `16:9（1920×1080）`、正方形 `1:1（1080×1080）` に対応
 - [x] 動画生成後、**TikTok、Instagram、YouTube Shorts** へワンクリックで自動公開可能
+- [x] LLM で公開用のタイトル、投稿文、ハッシュタグを生成し、YouTube の公開範囲と子ども向け設定を指定可能
+- [x] 独立した[ローカル動画プロジェクト CLI](docs/video-projects.md) でシーンの変更、バージョン比較、変更のないレンダリング成果物の再利用が可能
 
 ## ギャラリー 🎬
 
@@ -359,6 +389,8 @@ Windows をお使いの場合は、Microsoft のドキュメントを参照し�
 1. [WSL をインストールする](https://learn.microsoft.com/en-us/windows/wsl/install)
 2. [WSL で Docker コンテナを使用する](https://learn.microsoft.com/en-us/windows/wsl/tutorials/wsl-containers)
 
+初回起動の前に、コンテナにマウントするため `MoneyPrinterTurbo` ディレクトリ内で `config.example.toml` を `config.toml` にコピーしてください。既に `config.toml` がある場合は、そのまま保持してください。
+
 ```shell
 cd MoneyPrinterTurbo
 docker compose -f docker-compose.release.yml up
@@ -366,7 +398,6 @@ docker compose -f docker-compose.release.yml up
 
 > 既定では `docker-compose.release.yml` を推奨します。GitHub Container Registry からビルド済みイメージ `ghcr.io/harry0703/moneyprinterturbo:latest` を取得します。
 > ローカルでイメージをビルドする必要がある場合は、これまでどおり `docker compose up` を実行できます。
-> 初回起動の前に、`config.example.toml` を `config.toml` にコピーしておくと、コンテナにマウントされます。
 
 #### ② WebUI にアクセスする
 

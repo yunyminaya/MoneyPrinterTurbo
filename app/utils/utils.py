@@ -301,6 +301,9 @@ _THAI_OR_LAO_LETTER = (
 _THAI_OR_LAO_SENTENCE_SPACE = re.compile(
     rf"(?<={_THAI_OR_LAO_LETTER})\s+(?={_THAI_OR_LAO_LETTER})"
 )
+# Titles that stand before a name, as in "Mr. Smith", "Dr. Walker" and "Mt. Everest". "St." and
+# "Jr." are left out: they can end a sentence, as in "Our shop is on Main St. We open at 9."
+_TITLE_BEFORE_NAME = re.compile(r"(?<!\w)(?:Mr|Mrs|Ms|Dr|Prof|Mt)$")
 
 
 def split_string_by_punctuations(s, *, split_thai_and_lao_sentences=True):
@@ -352,6 +355,12 @@ def split_string_by_punctuations(s, *, split_thai_and_lao_sentences=True):
             txt += char
             continue
 
+        if char == "." and next_char == " " and _TITLE_BEFORE_NAME.search(txt):
+            # "Dr. Smith" and "Mt. Everest" stay in one line: the dot of a title before a name
+            # ends no sentence, and a line break there showed "Dr" or "Mt" alone as a subtitle.
+            txt += char
+            continue
+
         if char in (":", "：") and previous_char.isdigit() and next_char.isdigit():
             # Edge TTS returns a clock time such as "10:30" or "10：30" as one word, so it is no line break.
             txt += char
@@ -374,6 +383,29 @@ def split_string_by_punctuations(s, *, split_thai_and_lao_sentences=True):
     # filter empty string
     result = list(filter(None, result))
     return result
+
+
+def split_comma_separated_terms(text: str) -> list[str]:
+    terms = [term.strip() for term in re.split(r"[,，]", text)]
+    return [term for term in terms if term]
+
+
+def contains_han(text: str) -> bool:
+    return bool(
+        re.search(
+            r"[\u3400-\u4dbf\u4e00-\u9fff\uf900-\ufaff"
+            r"\U00020000-\U0002fa1f\U00030000-\U000323af]",
+            text,
+        )
+    )
+
+
+def has_only_latin_letters(text: str) -> bool:
+    """至少含一个拉丁字母，且没有其他文字的字母。"""
+    letters = [char for char in unicodedata.normalize("NFKC", text) if char.isalpha()]
+    return bool(letters) and all(
+        unicodedata.name(char, "").startswith("LATIN ") for char in letters
+    )
 
 
 PAUSE_TAG_KEYWORDS = (

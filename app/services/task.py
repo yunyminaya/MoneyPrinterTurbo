@@ -1,7 +1,6 @@
 import json
 import math
 import os
-import re
 import socket
 import tempfile
 import threading
@@ -18,6 +17,7 @@ from app.models import const
 from app.models.schema import VideoConcatMode, VideoParams
 from app.services import bgm as bgm_service
 from app.services import (
+    aigei,
     codex_image,
     codex_oauth,
     elevenlabs_music,
@@ -34,6 +34,7 @@ from app.services import (
     subtitle,
     task_artifacts,
     twelvelabs,
+    useapi,
     video,
     volcengine_seedance,
     voice,
@@ -100,9 +101,10 @@ _VIDEO_MUSIC_PROVIDERS = {
 
 
 _SUPPORTED_VIDEO_SOURCES = frozenset({
-    "pexels", "pixabay", "coverr", "local", "wavespeed",
-    "volcengine_seedance", "ofox", "metaso_minimax", "muapi",
-    "loomloom", "openai_image", "codex_image", "infistar", "jalapeno",
+    "pexels", "pixabay", "coverr", "aigei", "local", "wavespeed",
+    "volcengine_seedance", "ofox", "metaso_minimax", "muapi", "useapi",
+    "loomloom", "openai_image", "codex_image", "useapi_image", "infistar",
+    "jalapeno",
 })
 
 
@@ -396,15 +398,14 @@ def generate_terms(task_id, params, video_script):
             match_script_order=params.match_materials_to_script,
         )
     else:
+        # Delimiter-only input must not reach paid reranking or material search.
         if isinstance(video_terms, str):
-            video_terms = [term.strip() for term in re.split(r"[,，]", video_terms)]
+            video_terms = utils.split_comma_separated_terms(video_terms)
         elif isinstance(video_terms, list):
             video_terms = [term.strip() for term in video_terms]
+            video_terms = [term for term in video_terms if term]
         else:
             raise ValueError("video_terms must be a string or a list of strings.")
-
-        # Delimiter-only input must not reach paid reranking or material search.
-        video_terms = [term for term in video_terms if term]
 
         logger.debug(f"video terms: {utils.to_json(video_terms)}")
 
@@ -836,6 +837,7 @@ def get_video_materials(
                 ),
                 audio_duration=audio_duration * params.video_count,
                 max_clip_duration=params.video_clip_duration,
+                clip_speed=params.video_clip_speed,
                 match_script_order=params.match_materials_to_script,
                 image_motion=params.image_motion,
                 # 素材阶段占用 40%~50%：每下完一个文件推进一次，慢速网络下
@@ -843,6 +845,12 @@ def get_video_materials(
                 progress_callback=_stage_progress_reporter(task_id, 40, 50),
                 **generation_options,
             )
+        except aigei.AigeiError as exc:
+            _mark_task_failed(
+                task_id, "materials", str(exc),
+                details={"error_key": exc.key, "error_params": {"request_id": exc.request_id}},
+            )
+            return None
         except volcengine_seedance.VolcEngineSeedanceError as exc:
             # 未确认状态和已生成但下载失败都对应一个可在方舟控制台恢复的远端
             # 任务。统一从异常携带的 task_id 写入失败状态，避免不同异常分支
@@ -924,6 +932,19 @@ def get_video_materials(
             # user can recover it from the provider dashboard.
             remote_task_id = str(getattr(exc, "task_id", "") or "").strip()
             details = {"muapi_task_id": remote_task_id} if remote_task_id else None
+            _mark_task_failed(
+                task_id,
+                "materials",
+                str(exc),
+                details=details,
+            )
+            return None
+        except useapi.UseAPIError as exc:
+            # useapi.net jobs spend credits on the user's own account once they
+            # start. Keep the job ID on an unconfirmed or post-completion
+            # failure so the user can look it up with GET /jobs on useapi.net.
+            remote_task_id = str(getattr(exc, "task_id", "") or "").strip()
+            details = {"useapi_job_id": remote_task_id} if remote_task_id else None
             _mark_task_failed(
                 task_id,
                 "materials",
@@ -1023,7 +1044,7 @@ def generate_final_videos(
             warnings=warnings,
         )
     allocate_batch_materials = params.video_count > 1 and params.video_source in {
-        "pexels", "pixabay", "coverr", "local"
+        "pexels", "pixabay", "coverr", "aigei", "local"
     }
     source_usage = {}
     material_selections = []
@@ -1580,6 +1601,12 @@ def _run_pipeline(
             task_id, "preflight", f"unsupported video source: {params.video_source!r}"
         )
 
+    if stop_at in {"materials", "video"} and params.video_source == "aigei" and not aigei.api_key():
+        error = aigei.AigeiError("key_required")
+        return _mark_task_failed(
+            task_id, "preflight", str(error), details={"error_key": error.key}
+        )
+
     if (
         stop_at in {"materials", "video"}
         and params.video_source == "volcengine_seedance"
@@ -1655,6 +1682,28 @@ def _run_pipeline(
             "preflight",
             "MuAPI video generation requires a MuAPI API key",
         )
+
+    if stop_at in {"materials", "video"} and params.video_source == "useapi":
+        # Check the token, model and ratio before the script, voice and
+        # subtitles are generated, so a setup error costs nothing.
+        try:
+            if not useapi.is_enabled():
+                raise useapi.UseAPIError(
+                    "useapi.net video generation requires a useapi.net API token"
+                )
+            useapi.check_aspect(useapi.model_id(), params.video_aspect)
+        except useapi.UseAPIError as exc:
+            return _mark_task_failed(task_id, "preflight", str(exc))
+
+    if stop_at in {"materials", "video"} and params.video_source == "useapi_image":
+        try:
+            if not useapi.is_enabled():
+                raise useapi.UseAPIError(
+                    "useapi.net image generation requires a useapi.net API token"
+                )
+            useapi.image_model_id()
+        except useapi.UseAPIError as exc:
+            return _mark_task_failed(task_id, "preflight", str(exc))
 
     if (
         stop_at in {"materials", "video"}
